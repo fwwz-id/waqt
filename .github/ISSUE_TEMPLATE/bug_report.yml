@@ -1,0 +1,63 @@
+name: "🐛 Bug report"
+description: Report something that's broken or behaving unexpectedly.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! If this is about a **wrong prayer time**, please
+        fill in the location/method/madhhab fields — those determine the result.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+      placeholder: "Isha end time shows 23:10, but my madhhab profile is Maliki (one-third night)…"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to …
+        2. Set madhhab to …
+        3. See …
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: City / coordinates
+      description: City name, or latitude/longitude.
+      placeholder: "Jakarta (-6.2, 106.8)"
+  - type: dropdown
+    id: madhhab
+    attributes:
+      label: Madhhab profile
+      options: ["Syafi'i", "Hanafi", "Maliki", "Hanbali", "Not sure"]
+  - type: input
+    id: method
+    attributes:
+      label: Calculation method
+      placeholder: "Auto / Kemenag Indonesia / Umm al-Qura / …"
+  - type: input
+    id: timezone
+    attributes:
+      label: Timezone
+      placeholder: "Asia/Jakarta"
+  - type: dropdown
+    id: language
+    attributes:
+      label: App language
+      options: ["Bahasa Indonesia", "English"]
+  - type: input
+    id: environment
+    attributes:
+      label: Device / browser
+      placeholder: "Android Chrome 124 / iPhone Safari 17 / installed PWA"
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, console errors, etc.

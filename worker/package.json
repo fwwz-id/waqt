@@ -1,0 +1,23 @@
+{
+  "name": "waqt-push",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Cloudflare Worker push backend for Waktu Sholat (Level 2).",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "db:init": "wrangler d1 execute waqt --file=schema.sql",
+    "db:init:remote": "wrangler d1 execute waqt --remote --file=schema.sql",
+    "vapid": "node -e \"(async()=>{const {webcrypto:c}=await import('crypto');const k=await c.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);const pub=Buffer.from(await c.subtle.exportKey('raw',k.publicKey));const jwk=await c.subtle.exportKey('jwk',k.privateKey);const b64=b=>b.toString('base64').replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');console.log('VAPID_PUBLIC_KEY=',b64(pub));console.log('VAPID_PRIVATE_KEY=',jwk.d)})()\""
+  },
+  "dependencies": {
+    "adhan": "^4.4.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250109.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^3.100.0"
+  }
+}

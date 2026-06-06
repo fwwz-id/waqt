@@ -1,0 +1,27 @@
+# Copy to wrangler.toml and fill in your IDs/secrets.
+name = "waqt-push"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# --- D1 ---------------------------------------------------------------------
+# Create with: wrangler d1 create waqt
+[[d1_databases]]
+binding = "DB"
+database_name = "waqt"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+# --- Cron -------------------------------------------------------------------
+# Runs every 5 minutes; the handler only touches due users (indexed query).
+[triggers]
+crons = ["*/5 * * * *"]
+
+# --- Vars / Secrets ---------------------------------------------------------
+# Public VAPID key is safe to expose to the frontend.
+[vars]
+VAPID_PUBLIC_KEY = "REPLACE_WITH_VAPID_PUBLIC_KEY"
+VAPID_SUBJECT = "mailto:admin@example.com"
+ALLOWED_ORIGIN = "https://waqt.pages.dev"
+
+# Set the private key as a secret (never commit it):
+#   wrangler secret put VAPID_PRIVATE_KEY

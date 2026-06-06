@@ -1,0 +1,6 @@
+/// <reference types="vite/client" />
+/// <reference types="vite-plugin-pwa/client" />
+/// <reference types="vite-plugin-pwa/info" />
+
+/** App version, injected from package.json at build time (see vite.config.ts). */
+declare const __APP_VERSION__: string;

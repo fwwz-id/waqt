@@ -1,0 +1,28 @@
+name: "✨ Feature request"
+description: Suggest an improvement or new capability.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the need, not just the solution.
+      placeholder: "I can't tell how long is left before Ashar ends without opening the detail screen…"
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      placeholder: "Show a small countdown on the prayer list card…"
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: This keeps the app a reminder, not a fatwa engine (no absolute fiqh rulings).
+        - label: This works offline (or degrades gracefully without network).
