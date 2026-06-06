@@ -95,31 +95,13 @@ For reliable background push, deploy the companion Worker in [`worker/`](worker/
 (D1 + Cron Triggers + Web Push). The frontend remains fully functional without
 it.
 
-## CI/CD (GitHub Actions)
+**Cloudflare Pages (recommended):** connect this repo in the Cloudflare dashboard
+with build command `bun run build` and output directory `dist`. Pages builds and
+deploys on every push — no GitHub Actions workflow required.
 
-Two workflows in [`.github/workflows`](.github/workflows):
-
-| Workflow | Trigger | What it does |
-|----------|---------|--------------|
-| `deploy.yml` | push / PR | `bun install` → typecheck → test → build; deploys `dist/` to Cloudflare **Pages** (push to `main` = production, other branches = preview). PRs build + test only. |
-| `deploy-worker.yml` | manual / push to `worker/**` | Recreates `worker/wrangler.toml` from repo vars (no IDs committed) and runs `wrangler deploy`. Skipped unless configured. |
-
-**One-time setup:**
-
-1. Create the Pages project once (name must match `--project-name=waqt`):
-   ```bash
-   bunx wrangler pages project create waqt --production-branch main
-   ```
-2. Create a Cloudflare API token (My Profile → API Tokens) with **Pages: Edit**
-   (and **Workers Scripts: Edit** + **D1: Edit** if you deploy the Worker).
-3. Add repository **secrets** → `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
-4. *(Worker only)* add repository **variables** → `CF_D1_DATABASE_ID`,
-   `VAPID_PUBLIC_KEY`, `VAPID_SUBJECT`, `ALLOWED_ORIGIN`, and store the private
-   key as a Worker secret: `cd worker && wrangler secret put VAPID_PRIVATE_KEY`.
-
-> No-CI alternative: connect the repo in the Cloudflare Pages dashboard with
-> build command `bun run build` and output dir `dist`. Pages then builds on
-> every push without any workflow file (but won't deploy the Worker).
+**Worker:** deploy manually from `worker/` once D1 and VAPID are set up (see
+[`worker/README.md`](worker/README.md)). The dashboard integration does not
+deploy Workers.
 
 ## Edge cases handled
 
