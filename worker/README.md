@@ -41,6 +41,34 @@ bun run deploy
 | POST   | `/api/subscriptions`  | `{ userId, subscription: PushSubscriptionJSON }` |
 | DELETE | `/api/subscriptions`  | `{ endpoint }`                                   |
 | POST   | `/api/settings`       | `UserSettingsPayload`                            |
+| GET    | `/api/test-push`      | → `{ total, subscriptions }` + `Authorization: Bearer <TEST_PUSH_SECRET>` |
+| POST   | `/api/test-push`      | `{ title?, body, userId? }` + `Authorization: Bearer <TEST_PUSH_SECRET>` |
+
+### Test push from your machine
+
+```bash
+# 1. Set a shared secret on the Worker (once)
+cd worker
+wrangler secret put TEST_PUSH_SECRET
+
+# 2. Copy .env.example → .env and paste the same secret
+# 3. Deploy the Worker, then from repo root:
+
+# Confirm a device is actually registered, and get its userId:
+bun run notification --list
+
+# Push to every registered device:
+bun run notification "Assalamualaikum"
+
+# Push to one device (copy the userId from --list):
+bun run notification --user-id <uuid> "Assalamualaikum"
+```
+
+Enable notifications in the app at least once first (Settings → toggle ON, grant
+permission) so a subscription is saved to D1. Always run `--list` first — the
+userId is generated per browser/device, so guessing it is the usual reason a test
+"finds no subscriptions". Dead endpoints return `410 Gone` and are auto-pruned on
+the next send or cron run.
 
 ## Cron flow
 

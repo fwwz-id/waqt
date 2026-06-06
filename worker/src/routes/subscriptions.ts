@@ -21,7 +21,7 @@ export async function handleSubscriptions(
     } | null;
 
     if (!body?.userId || !body.subscription?.endpoint) {
-      return json({ error: "Invalid payload" }, { status: 400 }, env);
+      return json({ error: "Invalid payload" }, { status: 400 }, env, req);
     }
     const { userId, subscription } = body;
 
@@ -54,7 +54,7 @@ export async function handleSubscriptions(
       )
       .run();
 
-    return json({ ok: true, id }, { status: 201 }, env);
+    return json({ ok: true, id }, { status: 201 }, env, req);
   }
 
   if (req.method === "DELETE") {
@@ -62,15 +62,15 @@ export async function handleSubscriptions(
       endpoint?: string;
     } | null;
     if (!body?.endpoint) {
-      return json({ error: "Missing endpoint" }, { status: 400 }, env);
+      return json({ error: "Missing endpoint" }, { status: 400 }, env, req);
     }
     await env.DB.prepare(`DELETE FROM subscriptions WHERE endpoint = ?`)
       .bind(body.endpoint)
       .run();
-    return json({ ok: true }, {}, env);
+    return json({ ok: true }, {}, env, req);
   }
 
-  return json({ error: "Method not allowed" }, { status: 405 }, env);
+  return json({ error: "Method not allowed" }, { status: 405 }, env, req);
 }
 
 async function shortHash(input: string): Promise<string> {

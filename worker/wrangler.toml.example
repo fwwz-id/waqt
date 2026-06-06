@@ -21,7 +21,12 @@ crons = ["*/5 * * * *"]
 [vars]
 VAPID_PUBLIC_KEY = "REPLACE_WITH_VAPID_PUBLIC_KEY"
 VAPID_SUBJECT = "mailto:admin@example.com"
-ALLOWED_ORIGIN = "https://waqt.pages.dev"
+# Comma-separated. Include localhost for dev so the app can register a
+# subscription while running `bun run dev` / `bun run preview`.
+ALLOWED_ORIGIN = "https://waqt.pages.dev,http://localhost:5173,http://localhost:4173"
 
 # Set the private key as a secret (never commit it):
 #   wrangler secret put VAPID_PRIVATE_KEY
+#
+# Optional: manual push testing (`bun run notification` from repo root):
+#   wrangler secret put TEST_PUSH_SECRET

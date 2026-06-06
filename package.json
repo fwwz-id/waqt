@@ -2,7 +2,7 @@
   "name": "waqt",
   "private": true,
   "license": "Apache-2.0",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Waktu Sholat — pengingat waktu sholat berbasis lokasi, madzhab, dan estimasi akhir waktu.",
   "scripts": {
@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "notification": "bun scripts/notification.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",

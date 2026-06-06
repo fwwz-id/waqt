@@ -4,6 +4,8 @@ export interface Env {
   VAPID_PRIVATE_KEY: string;
   VAPID_SUBJECT: string;
   ALLOWED_ORIGIN: string;
+  /** Bearer token for POST /api/test-push (manual notification testing). */
+  TEST_PUSH_SECRET?: string;
 }
 
 export type PushSubscriptionJSON = {

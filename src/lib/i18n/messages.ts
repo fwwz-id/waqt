@@ -197,8 +197,35 @@ const id = {
     webLimitation:
       "Pengingat paling andal saat aplikasi sedang dibuka. Kalau aplikasi ditutup, pengingat kadang tidak muncul tepat waktu.",
     pushEnabled:
-      "Pengingat dikirim lewat server Cloudflare meski aplikasi ditutup. Waktu dihitung ulang setiap 5 menit.",
+      "Pengingat tetap muncul walau aplikasi sedang ditutup.",
+    pushRegisterFailed:
+      "Gagal mendaftarkan push ke server. Matikan lalu nyalakan lagi, atau tutup dan buka ulang aplikasi dari layar utama (PWA).",
+    enabledTitle: "Notifikasi diaktifkan",
+    enabledBody: "Kami akan kasih notifikasi kalo sesuai pengaturan kamu ya.",
     scheduled: (n: number) => `Hari ini ada ${n} pengingat.`,
+    troubleshoot: {
+      trigger: "Notifikasi tidak muncul?",
+      title: "Notifikasi tidak muncul?",
+      intro: "Coba langkah berikut satu per satu.",
+      steps: [
+        {
+          title: "Izinkan notifikasi",
+          body: "Pastikan kamu menekan Izinkan saat diminta. Kalau dulu pernah diblokir, ubah lewat pengaturan situs di browser, lalu buka ulang halaman ini.",
+        },
+        {
+          title: "Pakai Brave?",
+          body: "Brave mematikan layanan push bawaan. Buka pengaturan Brave, nyalakan 'Use Google services for push messaging', lalu buka ulang Brave.",
+        },
+        {
+          title: "Pengguna iPhone",
+          body: "Notifikasi cuma jalan kalau aplikasi sudah dipasang ke layar utama. Buka aplikasi lewat ikon di layar utama, bukan dari Safari.",
+        },
+        {
+          title: "Masih belum muncul",
+          body: "Matikan lalu nyalakan lagi sakelarnya, atau tutup dan buka ulang aplikasinya. Browser seperti Chrome biasanya paling lancar.",
+        },
+      ],
+    },
   },
 
   fiqh: {
@@ -559,8 +586,35 @@ const en: Messages = {
     webLimitation:
       "Reminders work best while the app is open. If you close it, they might not always show up on time.",
     pushEnabled:
-      "Reminders are sent via the Cloudflare server even when the app is closed. Times are rechecked every 5 minutes.",
+      "Reminders still show up even when the app is closed.",
+    pushRegisterFailed:
+      "Could not register push with the server. Toggle off and on again, or reopen the app from your home screen (PWA).",
+    enabledTitle: "Notifications on",
+    enabledBody: "We'll let you know based on your settings.",
     scheduled: (n: number) => `${n} reminders set for today.`,
+    troubleshoot: {
+      trigger: "Notifications not showing?",
+      title: "Notifications not showing?",
+      intro: "Try these one at a time.",
+      steps: [
+        {
+          title: "Allow notifications",
+          body: "Make sure you tapped Allow when asked. If it was blocked before, change it in your browser's site settings, then reload this page.",
+        },
+        {
+          title: "Using Brave?",
+          body: "Brave turns off its built-in push service. Open Brave settings, turn on 'Use Google services for push messaging', then reopen Brave.",
+        },
+        {
+          title: "On iPhone",
+          body: "Notifications only work once the app is added to your home screen. Open it from the home screen icon, not from Safari.",
+        },
+        {
+          title: "Still nothing",
+          body: "Toggle the switch off and on, or close and reopen the app. Browsers like Chrome usually work best.",
+        },
+      ],
+    },
   },
 
   fiqh: {

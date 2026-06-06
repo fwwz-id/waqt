@@ -1,10 +1,18 @@
 import type { ReactNode } from "react";
-import { BellRing, BellOff, ShieldAlert } from "lucide-react";
+import { BellRing, BellOff, ShieldAlert, HelpCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { useSettings } from "@/app/SettingsContext";
 import { usePrayerDay } from "@/hooks/usePrayerDay";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -18,7 +26,7 @@ export function NotificationSettings() {
   const { settings, setNotifications } = useSettings();
   const { t } = useT();
   const { windows } = usePrayerDay();
-  const { supported, permission, enabled, scheduledCount, usesPush, requestPermission } =
+  const { supported, permission, enabled, scheduledCount, usesPush, pushError, requestPermission, setPushEnabled } =
     useNotifications(windows);
   const notif = settings.notifications;
 
@@ -46,6 +54,16 @@ export function NotificationSettings() {
         </Alert>
       )}
 
+      {pushError && (
+        <Alert variant="warning">
+          <ShieldAlert className="h-4 w-4" />
+          <AlertDescription>
+            {t.notif.pushRegisterFailed}
+            <span className="mt-1 block text-xs opacity-70">{pushError}</span>
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Card>
         <CardContent className="space-y-4 p-4">
           <div className="flex items-center justify-between gap-3">
@@ -58,7 +76,7 @@ export function NotificationSettings() {
             {permission === "granted" ? (
               <Switch
                 checked={notif.enabled}
-                onCheckedChange={(v) => setNotifications({ enabled: v })}
+                onCheckedChange={(v) => void setPushEnabled(v)}
               />
             ) : (
               <Button size="sm" onClick={requestPermission}>
@@ -125,7 +143,50 @@ export function NotificationSettings() {
           )}
         </CardContent>
       </Card>
+
+      <TroubleshootDrawer />
     </div>
+  );
+}
+
+function TroubleshootDrawer() {
+  const { t } = useT();
+  const ts = t.notif.troubleshoot;
+
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <button
+          type="button"
+          className="flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <HelpCircle className="h-3.5 w-3.5" />
+          {ts.trigger}
+        </button>
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>{ts.title}</DrawerTitle>
+          <DrawerDescription>{ts.intro}</DrawerDescription>
+        </DrawerHeader>
+
+        <div className="max-h-[65vh] space-y-4 overflow-y-auto px-5 pb-8">
+          {ts.steps.map((step, i) => (
+            <div key={i} className="flex gap-3">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                {i + 1}
+              </span>
+              <div>
+                <p className="text-sm font-semibold">{step.title}</p>
+                <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
+                  {step.body}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
 

@@ -32,13 +32,22 @@ export async function fetchPushConfig(
 export async function registerPushSubscription(
   apiUrl: string,
   subscription: PushSubscriptionJSON,
-): Promise<boolean> {
-  const res = await fetch(`${apiUrl.replace(/\/$/, "")}/api/subscriptions`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId: getUserId(), subscription }),
-  });
-  return res.ok;
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await fetch(`${apiUrl.replace(/\/$/, "")}/api/subscriptions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: getUserId(), subscription }),
+    });
+    if (res.ok) return { ok: true };
+    const data = (await res.json().catch(() => ({}))) as { error?: string };
+    return { ok: false, error: data.error ?? `HTTP ${res.status}` };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Network error",
+    };
+  }
 }
 
 export async function unregisterPushSubscription(

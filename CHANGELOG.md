@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _Nothing yet._
 
+## [0.1.1] — 2026-06-06
+
+A reliability and clarity pass on notifications.
+
+### Added
+
+- **Enable confirmation** — turning reminders on now sends a short confirmation
+  notification in your selected language, so you immediately know it worked. It
+  is rate-limited (a cooldown plus a shared tag) so rapid on/off toggling can't
+  spam you.
+- **"Notifications not showing?" guide** — an always-visible troubleshooting
+  drawer in notification settings with plain steps for permission, Brave (enable
+  Google services for push messaging), iPhone (open from the home screen), and a
+  last-resort toggle/restart. Bilingual.
+- **Device listing for testing** — `bun run notification --list` shows every
+  registered device and its userId, so manual push tests target the right one
+  instead of guessing.
+
+### Changed
+
+- **Simpler wording** — removed backend/technical terms (e.g. "Cloudflare") from
+  the user-facing copy; the "works when the app is closed" note is now plain.
+
+### Fixed
+
+- **Clear push errors** — when registering for push fails, the app now shows the
+  real reason and what to do (for example, Brave blocking the push service) in
+  plain language, instead of a single generic message.
+- **Local-dev push** — added localhost to the backend's allowed origins so push
+  subscriptions can register while running the app locally.
+
 ## [0.1.0] — 2026-06-06
 
 Initial public release. A mobile-first, offline-first PWA that shows the
@@ -53,5 +84,6 @@ reminders before a window closes.
   majority opinion within the selected madhhab profile and are presented as
   estimates, not as a final fiqh ruling. This app is not a fatwa engine.
 
-[Unreleased]: https://github.com/fwwz-id/waqt/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/fwwz-id/waqt/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/fwwz-id/waqt/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/fwwz-id/waqt/releases/tag/v0.1.0

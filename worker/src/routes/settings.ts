@@ -11,12 +11,12 @@ export async function handleSettings(
   env: Env,
 ): Promise<Response> {
   if (req.method !== "POST") {
-    return json({ error: "Method not allowed" }, { status: 405 }, env);
+    return json({ error: "Method not allowed" }, { status: 405 }, env, req);
   }
 
   const s = (await req.json().catch(() => null)) as UserSettingsPayload | null;
   if (!s?.userId || typeof s.lat !== "number" || typeof s.lng !== "number") {
-    return json({ error: "Invalid payload" }, { status: 400 }, env);
+    return json({ error: "Invalid payload" }, { status: 400 }, env, req);
   }
 
   const now = Date.now();
@@ -66,5 +66,5 @@ export async function handleSettings(
     )
     .run();
 
-  return json({ ok: true }, {}, env);
+  return json({ ok: true }, {}, env, req);
 }

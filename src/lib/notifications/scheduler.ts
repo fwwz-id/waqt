@@ -123,8 +123,8 @@ export async function syncReminders(
 
   if (isPushProvider(provider)) {
     if (!appSettings?.location) return 0;
-    const subscribed = await provider.ensureSubscription();
-    if (!subscribed) return 0;
+    const synced = await provider.syncSubscriptionToServer();
+    if (!synced) return 0;
     const ok = await syncPushSettings(provider.apiUrl, appSettings);
     return ok ? reminders.length : 0;
   }
