@@ -1,17 +1,10 @@
 import type { Env, SubscriptionRow } from "./types";
+import { encryptPushPayload, type PushPayload } from "./pushEncrypt";
 
 /**
- * Minimal Web Push (VAPID) sender for Cloudflare Workers using Web Crypto.
- *
- * This sends an *authenticated tickle* (VAPID-signed, no encrypted payload).
- * The browser wakes the service worker, whose `push` handler falls back to a
- * default reminder message. To deliver an encrypted payload (RFC 8291,
- * aes128gcm) plug in an encryption step before posting; the VAPID auth here is
- * already production-shaped.
- *
- * Key format: standard web-push base64url keys.
- *  - VAPID_PUBLIC_KEY  = uncompressed P-256 point (65 bytes): 0x04 || X || Y
- *  - VAPID_PRIVATE_KEY = the 32-byte scalar `d`
+ * Web Push (VAPID) sender for Cloudflare Workers using Web Crypto.
+ * Delivers an encrypted JSON payload (RFC 8291 aes128gcm) that the service
+ * worker parses in its `push` handler.
  */
 
 function b64urlToBytes(s: string): Uint8Array {
@@ -29,7 +22,7 @@ function bytesToB64url(bytes: ArrayBuffer | Uint8Array): string {
 }
 
 async function importVapidKey(env: Env): Promise<CryptoKey> {
-  const pub = b64urlToBytes(env.VAPID_PUBLIC_KEY); // 65 bytes
+  const pub = b64urlToBytes(env.VAPID_PUBLIC_KEY);
   const d = env.VAPID_PRIVATE_KEY;
   const jwk: JsonWebKey = {
     kty: "EC",
@@ -73,21 +66,24 @@ export type PushResult = { ok: boolean; status: number; gone: boolean };
 export async function sendPush(
   env: Env,
   sub: SubscriptionRow,
+  payload: PushPayload,
 ): Promise<PushResult> {
   const audience = new URL(sub.endpoint).origin;
   const jwt = await vapidJwt(env, audience);
+  const body = await encryptPushPayload(sub.p256dh, sub.auth, payload);
 
   const res = await fetch(sub.endpoint, {
     method: "POST",
     headers: {
       TTL: "600",
       Authorization: `vapid t=${jwt}, k=${env.VAPID_PUBLIC_KEY}`,
-      // No encrypted body in this tickle; the SW supplies default text.
-      "Content-Length": "0",
+      "Content-Encoding": "aes128gcm",
+      "Content-Type": "application/octet-stream",
+      "Content-Length": String(body.byteLength),
     },
+    body,
   });
 
-  // 404/410 => subscription expired and should be pruned by the caller.
   return {
     ok: res.ok,
     status: res.status,

@@ -84,3 +84,12 @@ export class WebNotificationProvider implements NotificationProvider {
     this.timers.clear();
   }
 }
+
+let webProviderSingleton: WebNotificationProvider | null = null;
+
+export function getWebNotificationProvider(): WebNotificationProvider {
+  if (!webProviderSingleton) {
+    webProviderSingleton = new WebNotificationProvider();
+  }
+  return webProviderSingleton;
+}

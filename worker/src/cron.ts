@@ -44,7 +44,12 @@ export async function runCron(env: Env): Promise<void> {
       await Promise.all(
         (subs.results ?? []).map(async (sub) => {
           try {
-            const result = await sendPush(env, { ...sub });
+            const result = await sendPush(env, { ...sub }, {
+              title: reminder.title,
+              body: reminder.body,
+              prayer: reminder.prayer,
+              tag: `${reminder.prayer}:${reminder.fireAt}`,
+            });
             if (result.gone) {
               await env.DB.prepare(
                 `DELETE FROM subscriptions WHERE id = ?`,
@@ -55,7 +60,6 @@ export async function runCron(env: Env): Promise<void> {
           } catch {
             /* transient push failure — retried next tick */
           }
-          return reminder; // referenced for clarity; payload handled in push.ts
         }),
       );
     }

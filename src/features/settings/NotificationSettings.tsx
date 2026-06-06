@@ -18,7 +18,7 @@ export function NotificationSettings() {
   const { settings, setNotifications } = useSettings();
   const { t } = useT();
   const { windows } = usePrayerDay();
-  const { supported, permission, enabled, scheduledCount, requestPermission } =
+  const { supported, permission, enabled, scheduledCount, usesPush, requestPermission } =
     useNotifications(windows);
   const notif = settings.notifications;
 
@@ -117,7 +117,7 @@ export function NotificationSettings() {
               <Separator />
               <Alert variant="info">
                 <AlertDescription className="text-xs">
-                  {t.notif.webLimitation}
+                  {usesPush ? t.notif.pushEnabled : t.notif.webLimitation}
                   {scheduledCount > 0 && <> {t.notif.scheduled(scheduledCount)}</>}
                 </AlertDescription>
               </Alert>

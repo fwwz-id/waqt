@@ -4,7 +4,12 @@ import type {
   NotificationProvider,
   ScheduleReminderInput,
 } from "./providers";
-import { WebNotificationProvider } from "./webNotificationProvider";
+import { syncPushSettings } from "./pushApi";
+import {
+  initNotificationProvider,
+  PushNotificationProvider,
+} from "./pushNotificationProvider";
+import { getWebNotificationProvider } from "./webNotificationProvider";
 import { formatDuration } from "@/lib/utils/datetime";
 
 /**
@@ -52,7 +57,6 @@ export function computeReminders(
 
     for (const mins of settings.beforeEndMinutes) {
       const fireAt = new Date(w.end.getTime() - mins * 60_000);
-      // Only meaningful if the window has started (or will) and not yet ended.
       if (fireAt.getTime() > nowMs && fireAt.getTime() < w.end.getTime()) {
         reminders.push({
           id: `${w.name}:before_end:${mins}:${w.end.getTime()}`,
@@ -74,33 +78,57 @@ export function computeReminders(
   return reminders.sort((a, b) => a.fireAt.getTime() - b.fireAt.getTime());
 }
 
-let providerSingleton: NotificationProvider | null = null;
-
-/** The active provider. MVP always returns the web provider. */
+/** Sync fallback before async init completes. */
 export function getNotificationProvider(): NotificationProvider {
-  if (!providerSingleton) {
-    providerSingleton = new WebNotificationProvider();
-  }
-  return providerSingleton;
+  return getWebNotificationProvider();
+}
+
+export { initNotificationProvider };
+
+export function isPushProvider(
+  provider: NotificationProvider,
+): provider is PushNotificationProvider {
+  return provider.id === "push";
 }
 
 /**
- * Reconcile scheduled reminders with the desired set: cancel everything, then
- * (re)schedule the upcoming reminders. Called whenever windows or settings
- * change. Returns the count actually scheduled.
+ * Reconcile scheduled reminders with the desired set.
+ * - Web provider: local setTimeout while the app is alive.
+ * - Push provider: sync settings to the Worker; cron delivers in background.
  */
 export async function syncReminders(
   windows: PrayerWindow[],
   settings: NotificationSettings,
   now: Date = new Date(),
   lang: Language = "id",
+  provider: NotificationProvider = getNotificationProvider(),
+  appSettings?: Parameters<typeof syncPushSettings>[1],
 ): Promise<number> {
-  const provider = getNotificationProvider();
-  await provider.cancelAll();
-  if (!settings.enabled) return 0;
+  const web = getWebNotificationProvider();
+  await web.cancelAll();
+
+  if (!settings.enabled) {
+    if (isPushProvider(provider) && appSettings) {
+      await syncPushSettings(provider.apiUrl, {
+        ...appSettings,
+        notifications: { ...settings, enabled: false },
+      });
+    }
+    return 0;
+  }
+
   if (provider.getPermission() !== "granted") return 0;
 
   const reminders = computeReminders(windows, settings, now, lang);
+
+  if (isPushProvider(provider)) {
+    if (!appSettings?.location) return 0;
+    const subscribed = await provider.ensureSubscription();
+    if (!subscribed) return 0;
+    const ok = await syncPushSettings(provider.apiUrl, appSettings);
+    return ok ? reminders.length : 0;
+  }
+
   await Promise.all(reminders.map((r) => provider.scheduleReminder(r)));
   return reminders.length;
 }

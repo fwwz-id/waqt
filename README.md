@@ -99,9 +99,14 @@ it.
 with build command `bun run build` and output directory `dist`. Pages builds and
 deploys on every push — no GitHub Actions workflow required.
 
-**Worker:** deploy manually from `worker/` once D1 and VAPID are set up (see
-[`worker/README.md`](worker/README.md)). The dashboard integration does not
-deploy Workers.
+**Web Push (Level 2):** deploy the Worker in [`worker/`](worker/), then set the
+Pages environment variable `VITE_PUSH_API_URL` to your Worker URL (e.g.
+`https://waqt-push.<account>.workers.dev`). Rebuild Pages after adding it. The
+app auto-detects the backend, subscribes via VAPID, and syncs settings to D1;
+cron delivers reminders even when the PWA is closed.
+
+**Worker:** see [`worker/README.md`](worker/README.md) for D1, VAPID, and
+`ALLOWED_ORIGIN` setup. The dashboard Pages integration does not deploy Workers.
 
 ## Edge cases handled
 

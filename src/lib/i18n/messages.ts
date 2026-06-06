@@ -196,6 +196,8 @@ const id = {
       "Izin notifikasi diblokir. Aktifkan kembali melalui pengaturan browser untuk situs ini.",
     webLimitation:
       "Pengingat paling andal saat aplikasi sedang dibuka. Kalau aplikasi ditutup, pengingat kadang tidak muncul tepat waktu.",
+    pushEnabled:
+      "Pengingat dikirim lewat server Cloudflare meski aplikasi ditutup. Waktu dihitung ulang setiap 5 menit.",
     scheduled: (n: number) => `Hari ini ada ${n} pengingat.`,
   },
 
@@ -556,6 +558,8 @@ const en: Messages = {
       "Notification permission is blocked. Re-enable it in your browser settings for this site.",
     webLimitation:
       "Reminders work best while the app is open. If you close it, they might not always show up on time.",
+    pushEnabled:
+      "Reminders are sent via the Cloudflare server even when the app is closed. Times are rechecked every 5 minutes.",
     scheduled: (n: number) => `${n} reminders set for today.`,
   },
 

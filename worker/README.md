@@ -52,9 +52,8 @@ bun run deploy
 4. `next_notification_at` is advanced to the next reminder instant.
 
 ## Notes
-- `src/push.ts` sends a VAPID-authenticated tickle (no encrypted payload); the
-  service worker supplies default reminder text. Add RFC 8291 aes128gcm
-  encryption there for custom payloads.
+- `src/push.ts` sends an encrypted JSON payload (RFC 8291 aes128gcm); the
+  service worker parses it in the `push` handler.
 - For full parity with the advanced fiqh end-time rules, promote
   `../src/lib/prayer/*` into a shared workspace package and import it here
   instead of the simplified `schedule.ts` end map.
